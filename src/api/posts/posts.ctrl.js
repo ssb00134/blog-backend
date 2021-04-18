@@ -1,6 +1,6 @@
 import Post from '../../modles/post';
 import mongoose from 'mongoose';
-
+import Joi from '@hapi/joi';
 const { ObjectId } = mongoose.Types;
 
 export const checkObjectId = (ctx, next) => {
@@ -13,6 +13,18 @@ export const checkObjectId = (ctx, next) => {
 };
 
 export const write = async (ctx) => {
+	const schema = Joi.object().keys({
+		title: Joi.string().required(),
+		body: Joi.string().required(),
+		tags: Joi.array().items(Joi.string()).required(),
+	});
+
+	const result = schema.validate(ctx.request.body);
+	if (result.error) {
+		ctx.status = 400;
+		ctx.body = result.error;
+		return;
+	}
 	console.log('post 실행 write 실행');
 	const { title, body, tags } = ctx.request.body;
 	const post = new Post({
