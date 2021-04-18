@@ -13,6 +13,7 @@ export const checkObjectId = (ctx, next) => {
 };
 
 export const write = async (ctx) => {
+	console.log('write 실행');
 	const schema = Joi.object().keys({
 		title: Joi.string().required(),
 		body: Joi.string().required(),
@@ -42,8 +43,18 @@ export const write = async (ctx) => {
 };
 
 export const list = async (ctx) => {
+	const page = parseInt(ctx.query.page || '1', 10);
+	if (page < 1) {
+		ctx.status = 400;
+		return;
+	}
+	console.log('list 실행');
 	try {
-		const posts = await Post.find().exec();
+		const posts = await Post.find()
+			.sort({ _id: -1 })
+			.limit(10)
+			.skip((page - 1) * 10)
+			.exec();
 		ctx.body = posts;
 	} catch (error) {
 		console.log('error 발생 500');
@@ -77,6 +88,22 @@ export const remove = async (ctx) => {
 };
 export const update = async (ctx) => {
 	const { id } = ctx.params;
+	console.log('update 샐행');
+
+	const schema = Joi.object().keys({
+		title: Joi.string().required(),
+		body: Joi.string().required(),
+		tags: Joi.array().items(Joi.string()),
+	});
+
+	const result = schema.validate(ctx.request.body);
+	if (result.error) {
+		ctx.status = 400;
+		ctx.body = result.error;
+		console.log('error 발생 404');
+		return;
+	}
+
 	try {
 		const post = await Post.findByIdAndUpdate(id, ctx.request.body, {
 			new: true,
