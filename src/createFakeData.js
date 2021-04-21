@@ -1,4 +1,4 @@
-import Post from './modles/post';
+import Post from './models/post';
 
 export default function createFakeData() {
 	// 0, 1, ... 39 로 이루어진 배열 생성 후 포스트 데이터로 변환

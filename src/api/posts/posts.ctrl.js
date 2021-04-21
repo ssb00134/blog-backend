@@ -1,4 +1,4 @@
-import Post from '../../modles/post';
+import Post from '../../models/post';
 import mongoose from 'mongoose';
 import Joi from '@hapi/joi';
 const { ObjectId } = mongoose.Types;
