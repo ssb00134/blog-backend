@@ -65,7 +65,7 @@ export const list = async (ctx) => {
 		ctx.set('Last-Page', Math.ceil(postCount / 10));
 	} catch (error) {
 		console.log('error 발생 500');
-		ctx.throw(500, e);
+		ctx.throw(500, error);
 	}
 };
 export const read = async (ctx) => {
