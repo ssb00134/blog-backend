@@ -7,16 +7,16 @@ const UserSchema = new Schema({
 });
 
 UserSchema.methods.setPassword = async function (password) {
-	const hash = await bcypt.hash(password, 10);
+	const hash = await bcrypt.hash(password, 10);
 	this.hashedPassword = hash;
 };
 
 UserSchema.methods.checkPassword = async function (password) {
-	const result = await bcypt.compare(password, this.hashedPassword);
-	return result;
+	const result = await bcrypt.compare(password, this.hashedPassword);
+	return result; // true / false
 };
 
-UserSchema.statics.findByUsrname = function (username) {
+UserSchema.statics.findByUsername = function (username) {
 	return this.findOne({ username });
 };
 
