@@ -36,4 +36,4 @@ app.listen(port, () => {
 	console.log('Listening to port %d', port);
 });
 
-//백업함
+//폴더명변경
