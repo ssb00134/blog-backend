@@ -33,6 +33,9 @@ UserSchema.methods.generateToken = function () {
 			username: this.username,
 		},
 		process.env.JWT_SECRET,
+		{
+			expiresIn: '7d',
+		},
 	);
 };
 const User = mongoose.model('User', UserSchema);
