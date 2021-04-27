@@ -17,6 +17,11 @@ export const register = async (ctx) => {
 	console.log('reqbody : ' + ctx);
 
 	const { username, password } = ctx.request.body;
+	const token = user.generateToken();
+	ctx.cookies.set('access_token', token, {
+		maxAge: 1000 * 60 * 60 * 24 * 7, //7일
+		httponly: true,
+	});
 	try {
 		const exists = await User.findByUsername(username);
 		if (exists) {
@@ -33,6 +38,11 @@ export const register = async (ctx) => {
 		await user.save();
 
 		ctx.body = user.serialize();
+		const token = user.generateToken();
+		ctx.cookies.set('access_token', token, {
+			maxAge: 1000 * 60 * 60 * 24 * 7, //7일
+			httponly: true,
+		});
 	} catch (error) {
 		ctx.throw(500, error);
 		console.log('log : ' + error);
