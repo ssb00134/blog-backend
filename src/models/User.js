@@ -22,6 +22,10 @@ UserSchema.methods.checkPassword = async function (password) {
 	return result; // true / false
 };
 
+UserSchema.methods.generateToken = function () {
+	const token = jwt.sign();
+};
+
 UserSchema.statics.findByUsername = function (username) {
 	return this.findOne({ username });
 };
