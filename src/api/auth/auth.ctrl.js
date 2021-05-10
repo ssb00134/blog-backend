@@ -2,45 +2,43 @@ import Joi from '@hapi/joi';
 import User from '../../models/User';
 
 export const register = async (ctx) => {
+	// Request Body 검증하기
 	const schema = Joi.object().keys({
 		username: Joi.string().alphanum().min(3).max(20).required(),
 		password: Joi.string().required(),
 	});
+
 	const result = schema.validate(ctx.request.body);
 	if (result.error) {
 		ctx.status = 400;
 		ctx.body = result.error;
-		console.log('occur 400 error');
 		return;
 	}
 
-	console.log('reqbody : ' + ctx);
-
 	const { username, password } = ctx.request.body;
 	try {
+		// username  이 이미 존재하는지 확인
 		const exists = await User.findByUsername(username);
 		if (exists) {
-			ctx.status = 409;
-			console.log(`exists : 409`);
+			ctx.status = 409; // Conflict
 			return;
 		}
+
 		const user = new User({
 			username,
 		});
-		console.log(`user : ${user}`);
-
-		await user.setPassword(password);
-		await user.save();
+		await user.setPassword(password); // 비밀번호 설정
+		await user.save(); // 데이터베이스에 저장
 
 		ctx.body = user.serialize();
+
 		const token = user.generateToken();
 		ctx.cookies.set('access_token', token, {
-			maxAge: 1000 * 60 * 60 * 24 * 7, //7일
-			httponly: true,
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
+			httpOnly: true,
 		});
-	} catch (error) {
-		ctx.throw(500, error);
-		console.log('log : ' + error);
+	} catch (e) {
+		ctx.throw(500, e);
 	}
 };
 
